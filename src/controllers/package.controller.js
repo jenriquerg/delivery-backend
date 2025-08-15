@@ -55,3 +55,34 @@ exports.assignPackageToDelivery = async (req, res) => {
     res.status(500).json({ message: 'Error al asignar paquete' });
   }
 };
+
+// GET /api/packages/unassigned → Paquetes sin repartidor asignado
+exports.getUnassignedPackages = async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM packages WHERE delivery_id IS NULL'
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al obtener paquetes sin asignar' });
+  }
+};
+
+// PUT /api/packages/:id/assign → Asignar paquete existente a un delivery
+exports.assignExistingPackage = async (req, res) => {
+  const packageId = req.params.id;
+  const { delivery_id } = req.body;
+
+  try {
+    await pool.query(
+      'UPDATE packages SET delivery_id = $1 WHERE id = $2',
+      [delivery_id, packageId]
+    );
+    res.json({ message: 'Paquete asignado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al asignar paquete existente' });
+  }
+};
+
