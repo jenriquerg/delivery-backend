@@ -41,14 +41,14 @@ initSocket(io);
 
 // ---------- Servir Angular en producción ----------
 if (process.env.NODE_ENV === 'production') {
-  const angularPath = path.join(__dirname, 'dist', 'app-tracker');
+  const angularPath = path.join(__dirname, 'dist', 'app-tracker', 'browser');
   app.use(express.static(angularPath));
 
-  // Para rutas de Angular (SPA)
   app.get('*', (req, res) => {
     res.sendFile(path.join(angularPath, 'index.html'));
   });
 }
+
 
 // ---------------------------------------------------
 
